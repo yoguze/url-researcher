@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>危険URL判定ツール</title>
+</head>
+<body>
+    <h1>危険URL判定ツール</h1>
+    <input type="text" id="urlInput" placeholder="URLを入力してください" size="50">
+    <button id="checkBtn">判定</button>
+    <pre id="result"></pre>
+
+    <script>
+        document.getElementById("checkBtn").addEventListener("click", () => {
+            const url = document.getElementById("urlInput").value;
+            if (!url) {
+                alert("URLを入力してください");
+                return;
+            }
+
+            fetch("http://127.0.0.1:5000/api/check_url", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ url: url })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("result").textContent = 
+                    `URL: ${data.url}\n判定: ${data.status}\n理由: ${data.reason}`;
+            })
+            .catch(error => {
+                console.error("エラー:", error);
+            });
+        });
+    </script>
+</body>
+</html>
