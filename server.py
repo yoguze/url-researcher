@@ -10,10 +10,11 @@ blacklist = [
     "evil.example"
 ]
 
-# HTMLもFlaskから返す
+# HTMLをFlaskから配信
 @app.route("/")
 def index():
-    return render_template_string(open("index.html", encoding="utf-8").read())
+    with open("index.html", encoding="utf-8") as f:
+        return render_template_string(f.read())
 
 @app.route("/api/check_url", methods=["POST"])
 def check_url():
@@ -37,4 +38,6 @@ def check_url():
     })
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    # Render用に0.0.0.0で起動
+    app.run(host="0.0.0.0", port=5000)
+

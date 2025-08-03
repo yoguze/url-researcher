@@ -18,7 +18,8 @@
                 return;
             }
 
-            fetch("http://127.0.0.1:5000/api/check_url", {
+            // 相対パスでAPI呼び出し（Renderデプロイ後もOK）
+            fetch("/api/check_url", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ url: url })
@@ -35,3 +36,4 @@
     </script>
 </body>
 </html>
+
