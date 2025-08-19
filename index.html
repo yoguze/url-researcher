@@ -3,11 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title>危険URL判定ツール</title>
+    <style>
+        .safe { color: green; }
+        .warning { color: orange; }
+        .danger { color: red; }
+        .unwanted { color: goldenrod; }
+    </style>
 </head>
 <body>
     <h1>危険URL判定ツール</h1>
     <input type="text" id="urlInput" placeholder="URLを入力してください" size="50">
     <button id="checkBtn">判定</button>
+    <p id="loading" style="display:none;">判定中...</p>
     <pre id="result"></pre>
 
     <script>
@@ -18,7 +25,9 @@
                 return;
             }
 
-            // 相対パスでAPI呼び出し（Renderデプロイ後もOK）
+            document.getElementById("loading").style.display = "block";
+            document.getElementById("result").textContent = "";
+
             fetch("/api/check_url", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -26,10 +35,23 @@
             })
             .then(response => response.json())
             .then(data => {
-                document.getElementById("result").textContent = 
-                    `URL: ${data.url}\n判定: ${data.status}\n理由: ${data.reason}`;
+                document.getElementById("loading").style.display = "none";
+                if (data.error) {
+                    document.getElementById("result").textContent = "エラー: " + data.error;
+                    return;
+                }
+
+                let cssClass = "";
+                if (data.status === "安全") cssClass = "safe";
+                else if (data.reason.includes("SOCIAL_ENGINEERING")) cssClass = "warning";
+                else if (data.reason.includes("UNWANTED_SOFTWARE")) cssClass = "unwanted";
+                else if (data.status === "危険") cssClass = "danger";
+
+                document.getElementById("result").innerHTML =
+                    `<span class="${cssClass}">URL: ${data.url}\n判定: ${data.status}\n理由: ${data.reason}</span>`;
             })
             .catch(error => {
+                document.getElementById("loading").style.display = "none";
                 console.error("エラー:", error);
             });
         });
