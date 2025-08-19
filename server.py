@@ -5,7 +5,7 @@ import os
 
 app = Flask(__name__)
 # 公開する場合はフロントエンドのドメインを指定してください
-CORS(app, resources={r"/api/*": {"origins": ["https://yourdomain.com"]}})
+CORS(app, resources={r"/api/*": {"origins": ["https://url-researcher.onrender.com"]}})
 
 # Google Safe Browsing APIキー（環境変数から読み込む）
 API_KEY = os.getenv("GOOGLE_API_KEY")
